@@ -41,7 +41,7 @@ tambien podemos encontrar ICMP (Internet control message protocol)
 6. A continuación, hay más de una docena de tramas TCP/HTTP.
  ** ¿Podrías decir la URL que se está pidiendo? http://ekiga.net/ip/
  ** ¿Qué user agent (UA) la está pidiendo? User-Agent: Ekiga
- ** ¿Qué devuelve el servidor? 200 OK
+ ** ¿Qué devuelve el servidor? 200 OK con la IP 83.36.48.212
  ** Si lanzamos el navegador web, por ejemplo, Mozilla Firefox, y vamos a la misma URL, ¿qué recibimos? ¿Qué es, entonces, lo que está respondiendo el servidor? recibimos la ip de la máquina. en este caso 212.128.254.170
 
 
@@ -62,26 +62,30 @@ hace uso de este protocolo para establecer la conexión, ya que SIP no permite e
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
 
 9. Fijémonos en las tramas siguientes a la número 46:
- ** ¿Se registra con éxito en el primer intento?
- ** ¿Cómo sabemos si el registro se ha realizado correctamente o no?
- ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio)
- ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades.
+ ** ¿Se registra con éxito en el primer intento? no. podemos verlo en el pàquete 50. Status: 401 unauthorized
+ ** ¿Cómo sabemos si el registro se ha realizado correctamente o no? si el registro se ha realizado correctamente, Status: 200 ok
+ ** ¿Podrías identificar las diferencias entre el primer intento y el segundo de registro? (fíjate en el tamaño de los paquetes y mira a qué se debe el cambio) podemos ver que en el segundo intento, el tamaño del paquete es mayor.
+ ** ¿Cuánto es el valor del tiempo de expiración de la sesión? Indica las unidades. 3600s
 
 
 10. Una vez registrados, podemos efectuar una llamada. Vamos a probar con el servicio de eco de Ekiga que nos permite comprobar si nos hemos conectado correctamente. El servicio de eco tiene la dirección sip:500@ekiga.net. Veamos el INVITE de cerca.
- ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP?
- ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está?
- ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes?
- ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto?
+ ** ¿Puede verse el nombre del que efectúa la llamada, así como su dirección SIP? si. paquete 85. from "Gregorio Robles",  sip:grex@ekiga.net
+ ** ¿Qué es lo que contiene el cuerpo de la trama? ¿En qué formato/protocolo está? SIP/SDP, contiene los datos de la llamada
+ ** ¿Tiene éxito el primer intento? ¿Cómo lo sabes? no, el primer intento no tiene exito y recibe como respuesta una trama con la instrucción 407 proxy Authentication Required
+ ** ¿En qué se diferencia el segundo INVITE más abajo del primero? ¿A qué crees que se debe esto? Se diferencian principalmente en el tamaño, el segundo invite ocupa mas, ya que lleva la informacion proxy-authentication.
 
 
 11. Una vez conectado, estudia el intercambio de tramas.
  ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
+    se utilizan los protocolos H.261, relacionado con la codificacion de video y RTP (Real-time protocol)
  ** ¿Cuál es el tamaño de paquete de los mismos?
- ** ¿Se utilizan bits de padding?
+    Los paquetes RTP tienen longitud 214, en cambio los paquetes RTP presentan longitudes diferentes (hasta 1077)
+ ** ¿Se utilizan bits de padding? 
+    No. Padding: False
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
+    los mensajes h.261 se envian cada 3600s. La periodicidad de los paquetes RTP es variable
  ** ¿Cuántos bits/segundo estamos enviando?
-
+    estamos enviando 64kb/s
 
 
 [Al terminar el ejercicio es recomendable hacer commit de los ficheros modificados]
