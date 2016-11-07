@@ -79,7 +79,7 @@ hace uso de este protocolo para establecer la conexión, ya que SIP no permite e
  ** ¿Qué protocolo(s) se utiliza(n)? ¿Para qué sirven estos protocolos?
     se utilizan los protocolos H.261, relacionado con la codificacion de video y RTP (Real-time protocol)
  ** ¿Cuál es el tamaño de paquete de los mismos?
-    Los paquetes RTP tienen longitud 214, en cambio los paquetes RTP presentan longitudes diferentes (hasta 1077)
+    Los paquetes RTP tienen longitud 214, en cambio los paquetes H.261 presentan longitudes diferentes (hasta 1077)
  ** ¿Se utilizan bits de padding? 
     No. Padding: False
  ** ¿Cuál es la periodicidad de los paquetes que se envían?
@@ -92,35 +92,56 @@ hace uso de este protocolo para establecer la conexión, ya que SIP no permite e
 
 12. Vamos a ver más a fondo el intercambio RTP. En Telephony hay una opción RTP. Empecemos mirando los flujos RTP.
  ** ¿Cuántos flujos hay? ¿por qué?
+    hay 2 flujos, se transmite audio y video 
  ** ¿Cuántos paquetes se pierden?
+    no se pierde ningun paquete
  ** ¿Cuál es el valor máximo del delta? ¿Y qué es lo que significa el valor de delta?
+    Source Port: 5014  --> Max Delta: 1290.479ms
+    Source Port: 5010  --> MAx Delta: 1290.444ms
+    es la diferencia máxima entre paquetes consecutivos
  ** ¿Cuáles son los valores de jitter (medio y máximo)? ¿Qué quiere decir eso? ¿Estamos ante una conversación de calidad?
+    Source Port: 5014 --> Max Jitter: 183.096     Mean Jitter: 153.240
+    Source Port: 5010 --> Max Jitter: 119.635     Mean Jitter: 42.500
 
 
-13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.
+13. Elige un paquete RTP de audio. Analiza el flujo de audio en Telephony -> RTP -> Stream Analysis.    (Audio G711a)
  ** ¿Cuánto valen el delta y el jitter para el primer paquete que ha llegado?
+    El primer paquete es el 113, ambos campos se encuentran a 0.00
  ** ¿Podemos saber si éste es el primer paquete que nos han enviado?
+si, gracias al campo skew, podemos saber que este es el primer paquete.
  ** Los valores de jitter son menores de 10ms hasta un paquete dado. ¿Cuál?
+    hasta el paquete 247 --> Jitter: 38.82
  ** ¿A qué se debe el cambio tan brusco del jitter?
+    al cambio de velocidad de transmisión
  ** ¿Es comparable este cambio con el tiempo desde la recepción del paquete anterior? ¿Por qué?
+ si. como el valor de delta es elevado, el jitter tambien crece
  ** ¿Cuál es la dependencia entre el tiempo transcurrido desde el paquete anterior y el valor de jitter?
-
+    son proporcionales debido al retardo
 
 14. En Telephony selecciona el menú VoIP calls. Verás que se lista la llamada de voz IP capturada en una ventana emergente. Selecciona esa llamada y pulsa el botón Graph.
  ** ¿Cuánto dura la conversación?
+    dura mas o menos 24 segundos
  ** ¿Cuáles son sus SSRC? ¿Por qué hay varios SSRCs? ¿Hay CSRCs?
+no hay SSRCs
 
 
 15. Identifica la trama donde se finaliza la conversación.
  ** ¿Qué método SIP se utiliza?
+ la conversacion acaba en ell paquete 941. Se utiliza el metodo BYE
  ** ¿En qué trama(s)?
+    924, 925, 927, 933
  ** ¿Por qué crees que se envía varias veces?
+    se envía repetidas veces hasta que recibe la trama 200 ok
+
 
 
 16. Finalmente, se cierra la aplicación de VozIP.
  ** ¿Por qué aparece una instrucción SIP del tipo REGISTER?
+aparece para dar de baja al usuario y eliminarlo de la lista
  ** ¿En qué trama sucede esto?
+    en la 950
  ** ¿En qué se diferencia con la instrucción que se utilizó con anterioridad (al principio de la sesión)?
+    se diferencia en el campo expires, al principio de la comunicacion la trama se enviaba con expires: 3600, en esta ocasion el campo expires tiene el valor 0
 
 
 
